@@ -7,7 +7,6 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<meta name="description" content="Text Editor - Demo for the HTML5 File System Access.">
-	<link rel="canonical" href="https://googlechromelabs.github.io/text-editor/">
 	<link rel="manifest" href="./manifest.json">
 	<link rel="icon" type="image/png" href="./images/favicon.png">
 	<meta name="theme-color" content="#1a237e">
@@ -17,16 +16,8 @@
 	<meta name="msapplication-TileImage" content="./images/icon-144.png">
 	<meta name="msapplication-TileColor" content="#1a237e">
 	<meta name="msapplication-tap-highlight" content="no">
-	<meta name="twitter:card" content="summary">
-	<meta name="twitter:url" content="https://googlechromelabs.github.io/text-editor/">
-	<meta name="twitter:title" content="Text Editor">
-	<meta name="twitter:description" content="Text Editor - Demo for the HTML5 File System Access API.">
-	<meta name="twitter:image" content="./images/icon-192.png">
-	<meta name="twitter:creator" content="@petele">
 	<meta property="og:title" content="Text Editor">
 	<meta property="og:type" content="website">
-	<meta property="og:image" content="./images/icon-192.png">
-	<meta property="og:url" content="https://googlechromelabs.github.io/text-editor/">
 	<meta property="og:description" content="Text Editor - Demo for the HTML5 File System Access API.">
 	<script>
 	"use strict";
@@ -38,14 +29,30 @@
 		});
 	</script>
 	<style>
+ @font-face {
+  font-family: 'Fira Code VF';
+  src: url('./FiraCodeVF.woff2') format('woff2-variations');
+  font-weight: 300 700;
+  font-style: normal;
+}
+  }
+    .light { font-weight: 300; }
+    .regular { font-weight: 400; }
+    .medium { font-weight: 500; }
+    .semibold { font-weight: 600; }
+    .bold { font-weight: 700; }
+    .variable { font-family: 'Fira Code VF'; font-variation-settings: 'wght' 400; }
+    i { font-style: normal; color: #c33; }
+    b { font-weight: inherit; color: #c33; }
+
 	body,
 	html {
-		height: 100%
+		height: 100%;
 	}
 	
 	html {
 		--color-900: #1a237e;
-		--color-800: #283593;
+		--color-800: #3B3D57;
 		--color-700: #303f9f;
 		--color-600: #3949ab;
 		--color-500: #3f51b5;
@@ -64,24 +71,25 @@
 		--app-menu-bg-highlight: var(--color-100);
 		--app-menu-toggled-bg: var(--color-600);
 		--app-menu-toggled-color: var(--color-10);
-		--app-editor-bg: white;
+		--app-editor-bg: #1A1B26;
+		--app-editor-fg: #A9B1D6;
 		--app-editor-bg-disabled: var(--gray-300);
 		--app-footer-bg: var(--app-header-bg);
 		--app-footer-color: var(--color-100);
 		--app-footer-color-light: var(--color-10)
 	}
-	
+/*  #A9B1D6 #1A1BD6 #32344A */	
 	body {
 		display: flex;
 		flex-direction: column;
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		font-family: 'Fira Code VF';
 		margin: 0;
 		overscroll-behavior: none;
 		-webkit-font-smoothing: antialiased
 	}
 	
 	.hidden {
-		display: none!important
+		display: none !important
 	}
 	
 	.xsmall {
@@ -146,28 +154,28 @@
 		text-align: left;
 		width: 100%
 	}
-	
+
 	.menuContainer kbd {
 		float: right;
 		font-family: inherit
 	}
-	
+
 	.menuContainer>button:focus,
 	.menuContainer>button:hover,
 	.menuContainer>button[aria-expanded=true] {
 		background-color: var(--app-menu-selected)
 	}
-	
+
 	.menuItemContainer button:focus,
 	.menuItemContainer button:hover {
 		background-color: var(--app-menu-bg-highlight)
 	}
-	
+
 	.menuContainer button[aria-checked=true] {
 		background-color: var(--app-menu-toggled-bg);
 		color: var(--app-menu-toggled-color)
 	}
-	
+
 	#aDownloadFile,
 	#filePicker,
 	header #butClose {
@@ -176,13 +184,21 @@
 	
 	textarea {
 		background-color: var(--app-editor-bg);
+		color: var(--app-editor-fg);
 		box-sizing: border-box;
 		flex-grow: 1;
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		font-family: Arial, Helvetica, "sans-serif";
 		padding: 2px;
 		white-space: pre;
-		width: 100%
+		width: 100%;
+		resize: none;
+	    border: none
 	}
+
+	textarea::selection {
+    background-color: var(--app-editor-fg);
+    color: var(--app-editor-bg)
+    }
 	
 	textarea[disabled] {
 		background-color: var(--app-editor-bg-disabled)
@@ -193,27 +209,32 @@
 	}
 	
 	body.monospace textarea {
-		font-family: monospace
+		background-color: var(--app-editor-bg);
+		box-sizing: border-box;
+		flex-grow: 1;
+		font-family: 'Fira Code VF';
+		font-feature-settings: "ss03", "ss04", "ss06", "ss07";
+		font-variation-settings: 'wght' 550;
+		padding: 2px;
+		white-space: pre;
+		width: 100%
+
 	}
 	
 	body.wordwrap textarea {
 		white-space: normal
 	}
 	
-	details {
+	#footer {
 		background-color: var(--app-footer-bg);
 		color: var(--app-footer-color);
 		padding: 16px
 	}
-	
-	details summary {
-		cursor: pointer
-	}
-	
-	summary>span {
+
+	#footer>span {
 		float: right
 	}
-	
+
 	.footer-label {
 		background-color: var(--color-10);
 		border-radius: 4px;
@@ -228,7 +249,7 @@
 		color: var(--app-footer-color-light)
 	}
 	
-	details div {
+	div #footer {
 		margin-top: 1em
 	}
 	
@@ -262,9 +283,9 @@
 	<meta http-equiv="origin-trial" content="AouXz9/sqzYGRIFkw8KK0QXp0HOo99+Pg8NAr/4pRA1pAlaTeQ6BngqqkBUzfjvxzPcRf15pmieR4RDhJB9bKwAAAABleyJvcmlnaW4iOiJodHRwczovL2dvb2dsZWNocm9tZWxhYnMuZ2l0aHViLmlvOjQ0MyIsImZlYXR1cmUiOiJOYXRpdmVGaWxlU3lzdGVtMiIsImV4cGlyeSI6MTU5MDQxNzc1NX0=">
 </head>
 
-<body class="wordwrap">
+<body class="wordwrap, monospace">
 	<header>
-		<h1><span id="headerFileName">Text Editor</span><span id="modifiedHeader" class="hidden">*</span> <span id="headerAppName" class="hidden">- Text Editor</span></h1>
+		<h1><span id="headerFileName">Fake Vim Editor</span><span id="modifiedHeader" class="hidden"> [+]</span><span id="headerAppName" class="hidden">- Vim Editor</span></h1>
 		<nav class="menubar">
 			<div id="menuFile" class="menuContainer">
 				<button id="butFile" class="menuTop" aria-label="File" aria-haspopup="true" aria-expanded="false"><span class="kbdShortcut">F</span>ile</button>
@@ -303,15 +324,25 @@
 			</div>
 		</nav>
 	</header>
-	<textarea id="textEditor" autofocus spellcheck="true" aria-label="Text Editor"></textarea>
+	<textarea id="textEditor" class="monospace" autofocus spellcheck="true" aria-label="Text Editor">Hey, ya like text? here, take this:
+
+
+▀ ▀ ▀ ▒ ▒ ░ 🆨
+
+▇ █ ▉ ▍░ ⌥ ⌦ ⌧ ⌨〈 ⏰ ⏱ ⏲ ⏴ ⏵ ⏶ ⏷ ⏸ ⏹ ⏺ 
+
+   
+
+	</textarea>
 	<a id="aDownloadFile" download></a>
 	<input type="file" id="filePicker">
-<!-- 	<details id="footer" class="footer">
-		<summary>About <span><span id="modifiedFooter" class="hidden">*</span> <span id="lblLegacyFS" class="hidden footer-label">Legacy Mode</span> <span id="lblTabMovesFocus" class="hidden footer-label">Tab Moves Focus</span></span>
-		</summary>
-		<div id="not-supported">The <a href="https://wicg.github.io/file-system-access/" target="_blank">File System Access API</a> is <b>not</b> supported in this browser yet, and Text Editor is running in legacy mode. In legacy mode, the file modified indicators are not shown.</div>
-		<div>Text Editor is a simple text editor similar to notepad that makes it easy to edit text files on your local file system. It shows how to easily use the new HTML5 File System Access APIs. To learn more about the File System Access APIs and how this demo was built, check out <a href="https://web.dev/file-system-access/" target="_blank">The file system access APIs</a> article on Web Fundamentals, or see the <a href="https://github.com/GoogleChromeLabs/text-editor/" target="_blank">source code on GitHub</a>. Written by <a href="https://twitter.com/petele" target="_blank">Pete LePage</a>. <small id="lastUpdated">Last Updated: 2020-11-12T23:43:29.880Z (v0.0.13)</small></div>
-	</details> -->
+ 	<div id="footer" class="footer">
+		<div><div class="footer-label">FAKE STATUS LINE: <span><span id="modifiedFooter" class="hidden">[+] </span><span id="lblTabMovesFocus" class="hidden">Tab Moves Focus </span></span></div></div>
+<!-- 	<div id="not-supported">The <a href="https://wicg.github.io/file-system-access/" target="_blank">File System Access API</a> is <b>not</b> supported in this browser yet, and Text Editor is running in legacy mode. In legacy mode, the file modified indicators are not shown.</div>
+		<div>Text Editor is a simple text editor similar to notepad that makes it easy to edit text files on your local file system. It shows how to easily use the new HTML5 File System Access APIs. To learn more about the File System Access APIs and how this demo was built, check out <a href="https://web.dev/file-system-access/" target="_blank">The file system access APIs</a> article on Web Fundamentals, or see the <a href="https://github.com/GoogleChromeLabs/text-editor/" target="_blank">source code on GitHub</a>. Written by <a href="https://twitter.com/petele" target="_blank">Pete LePage</a>. <small id="lastUpdated">Last Updated: 2020-11-12T23:43:29.880Z (v0.0.13)</small></div> 
+  -->
+	
+	</div> 
 	<script>
 	var idbKeyval = function(e) {
 		"use strict";
@@ -410,17 +441,18 @@
 	<script>
 	"use strict";
 	const app = {
-		appName: "Text Editor",
+		appName: "Fake Vim Editor",
 		file: {
 			handle: null,
-			name: null,
+			name: 'Main.json',
 			isModified: !1
 		},
 		options: {
-			captureTabs: !0,
-			fontSize: 14,
-			monoSpace: !1,
-			wordWrap: !0
+			captureTabs: 0,
+			fontSize: 16,
+			monoSpace: !0,
+			wordWrap: !0,
+			vimMode: "Normal"
 		},
 		hasFSAccess: "chooseFileSystemEntries" in window || "showOpenFilePicker" in window,
 		isMac: navigator.userAgent.includes("Mac OS X")
@@ -571,7 +603,7 @@
 			window.addEventListener("DOMContentLoaded", () => {
 				e.style.fontSize = `${t.options.fontSize}px`, t.setFocus()
 			}), t.setText = t => {
-				t = t || "", e.value = t
+				t = t || "test", e.value = t
 			}, t.getText = () => e.value, t.insertIntoDoc = n => {
 				const o = e.selectionStart,
 					s = e.selectionEnd,
@@ -757,9 +789,9 @@
 	"use strict";
 	! function(e) {
 		const t = document.getElementById("headerAppName"),
-			n = document.getElementById("headerFileName"),
-			d = document.getElementById("modifiedHeader"),
-			i = document.getElementById("modifiedFooter");
+		      n = document.getElementById("headerFileName"),
+			  d = document.getElementById("modifiedHeader"),
+			  i = document.getElementById("modifiedFooter");
 		window.addEventListener("beforeunload", t => {
 			e.file.isModified && (t.preventDefault(), t.returnValue = "There are unsaved changes. Are you sure you want to leave?")
 		}), e.confirmDiscard = () => {
